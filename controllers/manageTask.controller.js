@@ -3,32 +3,26 @@ const asyncWrapper = require("../helpers/asyncWrapperFunc");
 const { default: mongoose } = require("mongoose");
 
 //^ DELETE EXISTING EXPENSE API
-let deleteTask = async (req, res, next) => {
-  try {
-    let { pid } = req.params;
+let deleteTask = asyncWrapper(async (req, res, next) => {
+  let { pid } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(pid)) {
-      return res
-        .status(400)
-        .json({ error: true, message: "Invalid ID format" });
-    }
-
-    let task = Task.findById(pid);
-
-    if (!task) {
-      return res.status(404).json({ error: true, message: "Task not found" });
-    }
-    let deletedTask = await Task.deleteOne({ _id: pid });
-
-    return res.status(200).json({
-      error: false,
-      message: "Task deleted",
-      data: deleteTask,
-    });
-  } catch (error) {
-    next(error);
+  if (!mongoose.Types.ObjectId.isValid(pid)) {
+    return res.status(400).json({ error: true, message: "Invalid ID format" });
   }
-};
+
+  let task = Task.findById(pid);
+
+  if (!task) {
+    return res.status(404).json({ error: true, message: "Task not found" });
+  }
+  let deletedTask = await Task.deleteOne({ _id: pid });
+
+  return res.status(200).json({
+    error: false,
+    message: "Task deleted",
+    data: deletedTask,
+  });
+});
 //^ GET UPDATE EXPENSE API = TO GET UPDATED EXPESNE DATA
 
 let updateTask = async (req, res, next) => {

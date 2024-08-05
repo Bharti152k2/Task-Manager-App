@@ -1,4 +1,5 @@
 const express = require("express");
+const auth = require("./middleware/auth");
 
 const user = require("./routes/user.routes.js");
 const task = require("./routes/task.routes.js");
@@ -14,7 +15,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api", user);
-app.use("/api", task);
+app.use("/api", auth, task);
 
 //* creating port for servers
 

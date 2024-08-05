@@ -1,5 +1,5 @@
 const RegisteredUser = require("../models/registerUser.model");
-const LoggedinUser = require("../models/loginUser.model");
+// const LoggedinUser = require("../models/loginUser.model");
 const { default: mongoose } = require("mongoose");
 const asyncWrapper = require("../helpers/asyncWrapperFunc");
 const encryptPassword = require("../helpers/encryption");
@@ -126,18 +126,22 @@ let login = asyncWrapper(async (req, res, next) => {
     //* validation for user login
     if (existingUser) {
       if (await decryptPassword(password, existingUser.password)) {
-        let loginUser = await LoggedinUser.create({
-          username,
-          password,
-        });
-        let token = generateToken(loginUser._id);
+        let token = generateToken(existingUser._id);
+        // let loginUser = await LoggedinUser.create({
+        //   username,
+        //   password,
+        // });
         return res.status(201).json({
           error: false,
-          message: "Loggedin Successfully",
-          data: loginUser,
+          message: "Logged in Successfully",
+          // data: loginUser,
           token,
-          userId: loginUser._id,
+          userId: existingUser._id,
         });
+      } else {
+        return res
+          .status(400)
+          .json({ error: true, message: "Incorrect password" });
       }
     }
     return res.status(400).json({ error: true, message: "User not found" });

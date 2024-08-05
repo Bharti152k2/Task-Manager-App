@@ -56,12 +56,10 @@ let addTask = asyncWrapper(async (req, res, next) => {
       message: "Task Added Succesfully",
       data: task,
     });
-  } else {
-    console.log("gyuyfgdghjkkhjg");
   }
 });
 //^ GET TASKS API = TO GET THE TASKS
-let getTask = asyncWrapper(async (req, res, next) => {
+let getTasks = asyncWrapper(async (req, res, next) => {
   let task = await Task.find();
   return res.status(200).json({
     error: false,
@@ -76,14 +74,20 @@ let getOneTask = asyncWrapper(async (req, res, next) => {
   if (!task) {
     return res.status(404).json({ error: true, message: "Task not found" });
   }
-  res.json(task);
+  return res
+    .status(200)
+    .json({ error: false, message: "Task Fetched Succefully", data: task });
 });
-//^ GET SINGLE EXPENSE API = TO GET SINGLE EXPESNE DATA
+//^ GET FILTERED AND SORTED TASK API
 
 let getFilteredSortedTask = asyncWrapper(async (req, res, next) => {
-  let { status, priority, duedate, sort, fields } = req.query;
+  let { title, status, priority, duedate, sort, fields } = req.query;
 
   let queryObject = {};
+
+  if (title) {
+    queryObject.title = title;
+  }
 
   if (status) {
     queryObject.status = status;
@@ -92,18 +96,29 @@ let getFilteredSortedTask = asyncWrapper(async (req, res, next) => {
     queryObject.priority = priority;
   }
   if (duedate) {
-    queryObject.duedate = duedate;
+    let date = new Date(duedate);
+    if (!NaN(date)) {
+      queryObject.duedate = new Date(duedate).toISOString();
+    } else {
+      return res.status(400).json({
+        error: true,
+        message: "Inavalid date format",
+      });
+    }
   }
+  let tasksQuery = Task.find(queryObject);
+
   if (fields) {
     let selectedFields = fields.split(",").join(" ") + "_id";
     fields = selectedFields;
+    tasksQuery = tasksQuery.select(selectedFields);
   }
-  let tasks = await Task.find(queryObject).select(fields);
+  // let tasks = Task.find(queryObject).select(fields);
 
   if (sort) {
-    tasks = tasks.sort(sort);
+    tasksQuery = tasksQuery.sort(sort);
   }
-  tasks = await tasks;
+  let tasks = await tasksQuery;
 
   return res.status(200).json({
     error: false,
@@ -113,7 +128,7 @@ let getFilteredSortedTask = asyncWrapper(async (req, res, next) => {
 });
 module.exports = {
   addTask,
-  getTask,
+  getTasks,
   getOneTask,
   getFilteredSortedTask,
 };

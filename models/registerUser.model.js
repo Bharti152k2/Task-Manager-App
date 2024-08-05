@@ -10,7 +10,6 @@ let signupSchema = new Schema(
     },
     lastname: {
       type: String,
-      // minlength: [3, "Lastname Should Contain Minimum 3 Characters"],
       trim: true,
     },
     email: {

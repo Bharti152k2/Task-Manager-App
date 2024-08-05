@@ -12,6 +12,7 @@ let auth = (req, res, next) => {
         return res.status(401).json({ message: "Token expired" });
       }
       console.error(error);
+      return res.status(401).json({ message: "Invalid Token" });
     }
   } else {
     return res.status(401).json({ message: "Unauthorized" });

@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-const User = require("../models/loginUser.model");
+const User = require("../models/registerUser.model");
 
 let taskSchema = new Schema({
   title: {
@@ -23,7 +23,7 @@ let taskSchema = new Schema({
   },
   status: {
     type: String,
-    // enum: ["to-do", "in-progress", "completed"],
+    enum: ["to-do", "in-progress", "completed"],
     default: "to-do",
   },
   user: {
