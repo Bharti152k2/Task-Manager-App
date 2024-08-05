@@ -113,7 +113,6 @@ let getFilteredSortedTask = asyncWrapper(async (req, res, next) => {
     fields = selectedFields;
     tasksQuery = tasksQuery.select(selectedFields);
   }
-  // let tasks = Task.find(queryObject).select(fields);
 
   if (sort) {
     tasksQuery = tasksQuery.sort(sort);
