@@ -86,7 +86,7 @@ let signUp = asyncWrapper(async (req, res, next) => {
 
 //^ LOGIN API : TO CHECK THE LOGIN DATA FROM BACKEND
 let generateToken = (userId) => {
-  return jwt.sign({ userId }, "123", { expiresIn: "1h" });
+  return jwt.sign({ userId }, "123", { expiresIn: "3m" });
 };
 let login = asyncWrapper(async (req, res, next) => {
   let { username, password } = req.body;
@@ -127,14 +127,10 @@ let login = asyncWrapper(async (req, res, next) => {
     if (existingUser) {
       if (await decryptPassword(password, existingUser.password)) {
         let token = generateToken(existingUser._id);
-        // let loginUser = await LoggedinUser.create({
-        //   username,
-        //   password,
-        // });
+
         return res.status(201).json({
           error: false,
           message: "Logged in Successfully",
-          // data: loginUser,
           token,
           userId: existingUser._id,
         });
